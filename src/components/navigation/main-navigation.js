@@ -1,6 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { useContext } from "react";
+import UserContext from "../../store/userContext";
 
 function MainNavigation() {
+    const { user, logout } = useContext(UserContext);
+
     return (
         <nav className="main-navigation">
             <div className="main-navigation-left">
@@ -9,8 +13,12 @@ function MainNavigation() {
             </div>
 
             <div className="main-navigation-right">
-                <NavLink to="/login" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Login</NavLink>
-                <NavLink to="/signup" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Signup</NavLink>
+                { user ? <Link to='/' onClick={logout} className="main-nav-link">Logout</Link> :
+                <>
+                    <NavLink to="/login" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Login</NavLink>
+                    <NavLink to="/signup" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Signup</NavLink>
+                </>
+                }
             </div>
         </nav>
     );
