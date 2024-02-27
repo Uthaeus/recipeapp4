@@ -8,7 +8,8 @@
     .home-left {
         padding: 2rem;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
         gap: 1rem;
     }
 
@@ -28,6 +29,7 @@
 }
 
 .recipe-item {
+    height: 200px;
     background-color: rgb(19, 18, 18);
     color: rgb(190, 213, 235);
     padding: 1rem;
@@ -36,6 +38,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    text-decoration: none;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+    }
 
     .recipe-item-main {
         display: flex;

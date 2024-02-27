@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { UserContext } from "../../store/userContext";
 
 function MainNavigation() {
-    const { isLoggedIn, logout } = useContext(UserContext);
+    const { user, isLoggedIn, logout } = useContext(UserContext);
 
     return (
         <nav className="main-navigation">
@@ -14,7 +14,10 @@ function MainNavigation() {
             </div>
 
             <div className="main-navigation-right">
-                { isLoggedIn ? <Link to='/' onClick={logout} className="main-nav-link">Logout</Link> :
+                { isLoggedIn ? <>
+                    <p className="main-nav-link">Hello, {user.username}</p>
+                    <Link to='/' onClick={logout} className="main-nav-link">Logout</Link>
+                </> :
                 <>
                     <NavLink to="/login" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Login</NavLink>
                     <NavLink to="/signup" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Signup</NavLink>
