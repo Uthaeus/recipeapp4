@@ -4,7 +4,7 @@ function MainNavigation() {
     return (
         <nav className="main-navigation">
             <div className="main-navigation-left">
-                <NavLink to="/home" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Home</NavLink>
+                <NavLink to="/" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Home</NavLink>
                 <NavLink to="/contact" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Contact</NavLink>
             </div>
 
