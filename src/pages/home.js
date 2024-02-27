@@ -6,6 +6,7 @@ function Home() {
             <div className="home-left">
                 <h1>Home</h1>
             </div>
+            
             <div className="home-right">
                 <Sidebar />
             </div>
