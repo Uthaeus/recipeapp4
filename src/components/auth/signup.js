@@ -1,11 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useContext } from "react";
+
+import { UserContext } from "../../store/userContext";
 
 export default function Signup() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
+    const { setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+
     const submitHandler = (data) => {
-        console.log(data);
+        console.log('sigining in', data);
+
+        setUser({...data});
+        navigate('/');
     }
 
     return (
