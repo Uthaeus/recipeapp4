@@ -7,13 +7,13 @@ import { UserContext } from "../../store/userContext";
 export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const { setUser } = useContext(UserContext);
+    const { initializeUser} = useContext(UserContext);
     const navigate = useNavigate();
 
     const submitHandler = (data) => {
         console.log('logging in', data);
 
-        setUser({...data});
+        initializeUser({...data});
 
         navigate("/");
     }
