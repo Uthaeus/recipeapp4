@@ -15,7 +15,7 @@ function MainNavigation() {
 
             <div className="main-navigation-right">
                 { isLoggedIn ? <>
-                    <p className="main-nav-link">Hello, {user.username}</p>
+                    <p className="main-nav-link">Hello, {user.displayName ? user.displayName : user.email}</p>
                     <NavLink to="/recipe/new" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Create New Recipe</NavLink>
                     <Link to='/' onClick={logout} className="main-nav-link">Logout</Link>
                 </> :
