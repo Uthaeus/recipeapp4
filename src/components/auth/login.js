@@ -29,9 +29,9 @@ export default function Login() {
 
             <form onSubmit={handleSubmit(submitHandler)} className="auth-form">
                 <div className="form-group mb-3">
-                    <label htmlFor="username">Username</label>
-                    <input type="text" id="username" className="form-control" {...register("username", { required: true })} />
-                    {errors.username && <p className="auth-warning-text">Username is required</p>}
+                    <label htmlFor="email">Email</label>
+                    <input type="text" id="email" className="form-control" {...register("email", { required: true })} />
+                    {errors.username && <p className="auth-warning-text">Email is required</p>}
                 </div>
 
                 <div className="form-group mb-4">

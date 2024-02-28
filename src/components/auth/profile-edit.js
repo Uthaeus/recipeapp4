@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import { updateProfile } from "firebase/auth";
+import { updateProfile, updatePassword } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "../../firebase-config";
@@ -10,26 +10,45 @@ import { auth, db, storage } from "../../firebase-config";
 function ProfileEdit() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
-    const [currentImage, setCurrentImage] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
 
     const navigate = useNavigate();
 
     useEffect(() => {
         reset({
             username: auth.currentUser.displayName ? auth.currentUser.displayName : '',
-            image: auth.currentUser.photoURL ? auth.currentUser.photoURL : '',
             email: auth.currentUser.email 
         })
-        if (auth.currentUser.photoURL) {
-            setCurrentImage(auth.currentUser.photoURL);
-        }
-    })
+    }, []);
 
     const imageChangeHandler = (event) => {
-        setCurrentImage(event.target.files[0]);
+        const file = event.target.files[0];
+        const imageRef = ref(storage, `images/${file.name}`);
+        uploadBytes(imageRef, file)
+        .then(() => {
+            getDownloadURL(imageRef)
+            .then((url) => {
+                setImageUrl(url);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        });
     }
 
     const submitHandler = async (data) => {
+        if (data.password !== data.passwordConfirm) {
+            alert('passwords do not match');
+            reset({
+                password: '',
+                passwordConfirm: ''
+            });
+            return;
+        }
+
         if (data.username !== '' && data.username !== auth.currentUser.displayName) {
             updateProfile(auth.currentUser, {
                 displayName: data.username
@@ -46,14 +65,7 @@ function ProfileEdit() {
                 // ..
             });
         }
-        if (data.image !== '' && data.image !== auth.currentUser.photoURL) {
-            const imageRef = ref(storage, `images/${auth.currentUser.uid}`);
-            await uploadBytes(imageRef, currentImage);
-            const downloadURL = await getDownloadURL(imageRef);
-            updateDoc(doc(db, "users", auth.currentUser.uid), {
-                image: downloadURL
-            });
-        }
+
         if (data.email !== '' && data.email !== auth.currentUser.email) {
             updateProfile(auth.currentUser, {
                 email: data.email
@@ -70,6 +82,28 @@ function ProfileEdit() {
                 // ..
             });
         }
+
+        if (data.password !== '') {
+            updatePassword(auth.currentUser, data.password)
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log('error', errorCode, errorMessage);
+                // ..
+            });
+        }
+
+        if (imageUrl !== '') {
+            updateProfile(auth.currentUser, {
+                photoURL: imageUrl
+            })
+            .then(() => {
+                updateDoc(doc(db, "users", auth.currentUser.uid), {
+                    image: imageUrl
+                });
+            })
+        }
+
         navigate('/');
     }
 
@@ -91,7 +125,7 @@ function ProfileEdit() {
                 </div>
 
                 <div className="form-group mb-3">
-                    <img src={currentImage} alt="" />
+                    <img src={imageUrl} alt="" />
                     <label htmlFor="image">Profile Image</label>
                     <input type="file" id="image" className="form-control" onChange={imageChangeHandler} />
                     {errors.image && <p className="auth-warning-text">Image is required</p>}
