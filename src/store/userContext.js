@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 import { auth } from "../firebase-config";
 
@@ -26,8 +26,7 @@ function UserContextProvider({ children }) {
     }, []);
 
     const logout = () => {
-        setUser(null);
-        setIsLoggedIn(false);
+        signOut(auth);
     };
 
     const value = {

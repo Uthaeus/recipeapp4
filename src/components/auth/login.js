@@ -11,7 +11,16 @@ export default function Login() {
     const submitHandler = (data) => {
         console.log('logging in', data);
 
-        navigate("/");
+        signInWithEmailAndPassword(auth, data.email, data.password)
+        .then(() => {
+            navigate('/');
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log('error', errorCode, errorMessage);
+            // ..
+        });
     }
 
     return (
