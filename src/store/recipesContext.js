@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext } from "react";
-import { collection } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 import { db } from "../firebase-config";
 
@@ -40,7 +40,7 @@ export default function RecipesContextProvider({ children }) {
         addRecipe,
         deleteRecipe,
     };
-    
+
     return (
         <RecipesContext.Provider value={value}>
             {!isLoading && children}
