@@ -1,8 +1,10 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+
+import { auth } from "../firebase-config";
 
 export const UserContext = createContext({
     user: {},
-    initializeUser: () => {},
     logout: () => {},
     isLoggedIn: false
 });
@@ -11,19 +13,25 @@ function UserContextProvider({ children }) {
     const [user, setUser] = useState({});
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+    }, []);
+
     const logout = () => {
         setUser(null);
         setIsLoggedIn(false);
     };
 
-    const initializeUser = (data) => {
-        setUser(data);
-        setIsLoggedIn(true);
-    };
-
     const value = {
         user,
-        initializeUser,
         logout,
         isLoggedIn
     };

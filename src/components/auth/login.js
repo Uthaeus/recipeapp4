@@ -1,19 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useContext } from "react";
-
-import { UserContext } from "../../store/userContext";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase-config";
 
 export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const { initializeUser} = useContext(UserContext);
     const navigate = useNavigate();
 
     const submitHandler = (data) => {
         console.log('logging in', data);
-
-        initializeUser({...data});
 
         navigate("/");
     }
