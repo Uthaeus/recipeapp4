@@ -27,8 +27,10 @@ function RecipeNew() {
 
     const submitHandler = (data) => {
         if (ingredient !== '' && amount !== '') {
-            setIngredients([...ingredients, { ingredient, amount }]);
+            setIngredients(() => [...ingredients, { ingredient, amount }]);
         }
+
+        data.ingredients = ingredients;
         
         let newDocId;
 
