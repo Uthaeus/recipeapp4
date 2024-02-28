@@ -1,9 +1,18 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { addDoc, collection } from "firebase/firestore";
+
+import { UserContext } from "../../store/userContext";
+import { RecipesContext } from "../../store/recipesContext";
+
+import { db } from "../../firebase-config";
 
 function RecipeNew() {
     const { register, handleSubmit, formState: { errors } } = useForm();
+
+    const { user } = useContext(UserContext);
+    const { addRecipe } = useContext(RecipesContext);
     const navigate = useNavigate();
 
     const [ingredients, setIngredients] = useState([]);
@@ -17,9 +26,33 @@ function RecipeNew() {
     }
 
     const submitHandler = (data) => {
-        data.ingredients = ingredients;
-        console.log('submitting', data);
-        navigate('/');
+        if (ingredient !== '' && amount !== '') {
+            setIngredients([...ingredients, { ingredient, amount }]);
+        }
+        
+        let newDocId;
+
+        addDoc(collection(db, "recipes"), {
+            ...data,
+            user_id: user.uid
+        })
+        .then((doc) => {
+            newDocId = doc.id;
+        })
+        .then(() => {
+            addRecipe({
+                id: newDocId,
+                ...data,
+                user_id: user.uid
+            });
+            navigate('/');
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log('error', errorCode, errorMessage);
+            // ..
+        });
     }
 
     return (
