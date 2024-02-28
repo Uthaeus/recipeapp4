@@ -5,6 +5,7 @@ import Home from "./pages/home";
 import Contact from "./pages/contact";
 import Login from "./components/auth/login";
 import Signup from "./components/auth/signup";
+import ProfileEdit from "./components/auth/profile-edit";
 import RecipeDetail from "./components/recipe/recipe-detail";
 import RecipeEdit from "./components/recipe/recipe-edit";
 import RecipeNew from "./components/recipe/recipe-new";
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/profile/edit",
+        element: <ProfileEdit />,
       },
       {
         path: "/recipe/:id",
