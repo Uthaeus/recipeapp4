@@ -11,11 +11,14 @@ function RecipeNew() {
     const [amount, setAmount] = useState('');
 
     const addIngredientHandler = () => {
-        setIngredients([...ingredients, { ingredient: '', amount: '' }]);
+        setIngredients([...ingredients, { ingredient, amount }]);
+        setIngredient('');
+        setAmount('');
     }
 
     const submitHandler = (data) => {
-        console.log(data);
+        data.ingredients = ingredients;
+        console.log('submitting', data);
         navigate('/');
     }
 

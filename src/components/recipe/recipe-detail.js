@@ -8,16 +8,16 @@ function RecipeDetail() {
     const [recipe, setRecipe] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        fetch(`http://localhost:3000/recipes/${id}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setRecipe(data);
-                setIsLoading(false);
-            }).catch((error) => {
-                console.log(error);
-            });
-    }, [ id ]);
+    // useEffect(() => {
+    //     fetch(`http://localhost:3000/recipes/${id}`)
+    //         .then((response) => response.json())
+    //         .then((data) => {
+    //             setRecipe(data);
+    //             setIsLoading(false);
+    //         }).catch((error) => {
+    //             console.log(error);
+    //         });
+    // }, [ id ]);
 
     if (isLoading) {
         return (
