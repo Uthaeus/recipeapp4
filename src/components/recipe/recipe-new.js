@@ -27,10 +27,11 @@ function RecipeNew() {
 
     const submitHandler = (data) => {
         if (ingredient !== '' && amount !== '') {
-            setIngredients(() => [...ingredients, { ingredient, amount }]);
+            data.ingredients = [...ingredients, { ingredient, amount }];
+        } else {
+            data.ingredients = ingredients;
         }
 
-        data.ingredients = ingredients;
         
         let newDocId;
 
@@ -40,14 +41,9 @@ function RecipeNew() {
         })
         .then((doc) => {
             newDocId = doc.id;
-        })
-        .then(() => {
-            addRecipe({
-                id: newDocId,
-                ...data,
-                user_id: user.uid
-            });
-            navigate('/');
+
+            addRecipe({ id: newDocId, ...data });
+            navigate(`/`);
         })
         .catch((error) => {
             const errorCode = error.code;
