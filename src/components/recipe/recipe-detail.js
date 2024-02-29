@@ -1,12 +1,16 @@
 import { useParams } from "react-router";
 import { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 import { RecipesContext } from "../../store/recipesContext";
+import { UserContext } from "../../store/userContext";
 
 function RecipeDetail() {
     const { id } = useParams();
-    const { recipes } = useContext(RecipesContext);
+    const navigate = useNavigate();
+    const { recipes, deleteRecipe } = useContext(RecipesContext);
+    const { user } = useContext(UserContext);
     const [recipe, setRecipe] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -14,6 +18,11 @@ function RecipeDetail() {
         setRecipe(recipes.find((recipe) => recipe.id === id));
         setIsLoading(false);
     }, [recipes, id]);
+
+    const deleteRecipeHandler = () => {
+        deleteRecipe(id);
+        navigate('/');
+    }
 
     if (isLoading) {
         return (
@@ -28,7 +37,13 @@ function RecipeDetail() {
             <h1>{recipe.title}</h1>
             <p>{recipe.description}</p>
             <p>{recipe.time}</p>
-            <Link to={`/recipe/${id}/edit`}>Edit</Link>
+            
+            {user && (user.uid === recipe.user_id || user.role === 'admin') && (
+                <div className="recipe-detail-actions">
+                    <Link to={`/recipe/${recipe.id}/edit`}><button>Edit</button></Link>
+                    <button onClick={deleteRecipeHandler}>Delete</button>
+                </div>
+            )}
         </div>
     );
 }
