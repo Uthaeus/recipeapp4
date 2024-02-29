@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc } from "firebase/firestore";
+import { db } from "../firebase-config";
 
 import { auth } from "../firebase-config";
 
@@ -14,15 +16,36 @@ function UserContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
+        const fetchUserData = async () => {
+            const user = await new Promise((resolve, reject) => {
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        resolve(user);
+                    } else {
+                        resolve(null);
+                    }
+                });
+            });
+    
             if (user) {
-                setUser(user);
+                if (!user.role) {
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnapshot = await getDoc(userRef);
+                    const userData = userSnapshot.data();
+                    const userRole = userData.role ? userData.role : "user";
+                    
+                    setUser({ ...userData, role: userRole });
+                } else {
+                    setUser(user);
+                }
                 setIsLoggedIn(true);
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
             }
-        });
+        };
+    
+        fetchUserData();
     }, []);
 
     const logout = () => {
