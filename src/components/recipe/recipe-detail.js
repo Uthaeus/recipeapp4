@@ -1,23 +1,19 @@
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import { RecipesContext } from "../../store/recipesContext";
 
 function RecipeDetail() {
     const { id } = useParams();
+    const { recipes } = useContext(RecipesContext);
     const [recipe, setRecipe] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    // useEffect(() => {
-    //     fetch(`http://localhost:3000/recipes/${id}`)
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             setRecipe(data);
-    //             setIsLoading(false);
-    //         }).catch((error) => {
-    //             console.log(error);
-    //         });
-    // }, [ id ]);
+    useEffect(() => {
+        setRecipe(recipes.find((recipe) => recipe.id === id));
+        setIsLoading(false);
+    }, [recipes, id]);
 
     if (isLoading) {
         return (

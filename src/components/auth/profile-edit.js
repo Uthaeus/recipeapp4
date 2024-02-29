@@ -99,7 +99,7 @@ function ProfileEdit() {
             })
             .then(() => {
                 updateDoc(doc(db, "users", auth.currentUser.uid), {
-                    image: imageUrl
+                    imageUrl: imageUrl
                 });
             })
         }
