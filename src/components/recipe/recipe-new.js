@@ -8,6 +8,8 @@ import { RecipesContext } from "../../store/recipesContext";
 
 import { db } from "../../firebase-config";
 
+import FormIngredientItem from "./form-ingredient-item";
+
 function RecipeNew() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -23,6 +25,12 @@ function RecipeNew() {
         setIngredients([...ingredients, { ingredient, amount }]);
         setIngredient('');
         setAmount('');
+    }
+
+    const deleteIngredientHandler = (index) => {
+        const newIngredients = [...ingredients];
+        newIngredients.splice(index, 1);
+        setIngredients(newIngredients);
     }
 
     const submitHandler = (data) => {
@@ -90,13 +98,9 @@ function RecipeNew() {
 
                     <div className="col-md-6">
                         <h3>Ingredients</h3>
-                        <ul>
-                            {ingredients.map((ingredient, index) => (
-                                <li key={index}>
-                                    {ingredient.ingredient} - {ingredient.amount}
-                                </li>
-                            ))}
-                        </ul>
+                        {ingredients.map((ingredient, index) => (
+                            <FormIngredientItem key={index} ingredient={ingredient.ingredient} amount={ingredient.amount} onDelete={() => deleteIngredientHandler(index)} />
+                        ))}
                     </div>
                 </div>
 
