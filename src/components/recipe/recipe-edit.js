@@ -8,6 +8,8 @@ import { db } from "../../firebase-config";
 
 import { RecipesContext } from "../../store/recipesContext";
 
+import FormIngredientItem from "./form-ingredient-item";
+
 function RecipeEdit() {
     const { id } = useParams();
     const { recipes, deleteRecipe } = useContext(RecipesContext);
@@ -41,6 +43,12 @@ function RecipeEdit() {
         setIngredients((prev) => [...prev, { ingredient, amount }]);
         setIngredient('');
         setAmount('');
+    }
+
+    const deleteIngredientHandler = (index) => {
+        const newIngredients = [...ingredients];
+        newIngredients.splice(index, 1);
+        setIngredients(newIngredients);
     }
 
     const deleteRecipeHandler = () => {
@@ -119,13 +127,15 @@ function RecipeEdit() {
 
                     <div className="col-md-6">
                         <h3>Ingredients</h3>
-                        <ul>
-                            {ingredients?.map((ingredient, index) => (
-                                <li key={index}>
-                                    {ingredient.ingredient} - {ingredient.amount}
-                                </li>
-                            ))}
-                        </ul>
+
+                        {ingredients.map((ingredient, index) => (
+                            <FormIngredientItem
+                                key={index}
+                                ingredient={ingredient.ingredient}
+                                amount={ingredient.amount}
+                                onDelete={() => deleteIngredientHandler(index)}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -140,7 +150,7 @@ function RecipeEdit() {
             </form>
 
             <div className="recipe-edit-actions">
-                <button className="btn btn-danger" onClick={deleteRecipeHandler}>Delete</button>
+                <button className="btn btn-danger" onClick={deleteRecipeHandler}>Delete Recipe</button>
                 <Link to={`/recipe/${id}`} className="btn btn-secondary">Back to Detail</Link>
                 <Link to="/" className="auth-link">Home</Link>
             </div>
