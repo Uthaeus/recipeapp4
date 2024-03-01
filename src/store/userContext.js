@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { collection, getDocs, doc, onSnapshot } from "firebase/firestore";
 
+import { db } from "../firebase-config";
 import { auth } from "../firebase-config";
 
 export const UserContext = createContext({
@@ -14,12 +16,27 @@ function UserContextProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-
-        onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            setIsLoggedIn(!!currentUser);
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                const userRef = doc(db, "users", currentUser.uid);
+                const userSnapshot = onSnapshot(userRef, (user) => {
+                    setUser({...user.data(), id: currentUser.uid});
+                });
+    
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        }, (error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log('Error', errorCode, errorMessage);
         });
-
+    
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const logout = () => {

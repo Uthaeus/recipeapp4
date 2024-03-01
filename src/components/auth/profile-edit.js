@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
@@ -7,8 +7,12 @@ import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "../../firebase-config";
 
+import { UserContext } from "../../store/userContext";
+
 function ProfileEdit() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
+
+    const { user } = useContext(UserContext);
 
     const [imageUrl, setImageUrl] = useState('');
 
@@ -16,8 +20,8 @@ function ProfileEdit() {
 
     useEffect(() => {
         reset({
-            username: auth.currentUser.displayName ? auth.currentUser.displayName : '',
-            email: auth.currentUser.email 
+            username: user.username ? user.username : '',
+            email: user.email,
         })
     }, []);
 
@@ -49,24 +53,19 @@ function ProfileEdit() {
             return;
         }
 
-        if (data.username !== '' && data.username !== auth.currentUser.displayName) {
-            updateProfile(auth.currentUser, {
-                displayName: data.username
-            })
-            .then(() => {
-                updateDoc(doc(db, "users", auth.currentUser.uid), {
-                    username: data.username
-                });
+        if (data.username !== '' && data.username !== user.username) {
+            updateDoc(doc(db, "users", auth.currentUser.uid), {
+                username: data.username
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log('error', errorCode, errorMessage);
+                console.log('profile username change error', errorCode, errorMessage);
                 // ..
             });
         }
 
-        if (data.email !== '' && data.email !== auth.currentUser.email) {
+        if (data.email !== '' && data.email !== user.email) {
             updateProfile(auth.currentUser, {
                 email: data.email
             })
@@ -78,7 +77,7 @@ function ProfileEdit() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log('error', errorCode, errorMessage);
+                console.log('profile email change error', errorCode, errorMessage);
                 // ..
             });
         }
@@ -88,20 +87,20 @@ function ProfileEdit() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log('error', errorCode, errorMessage);
+                console.log('profile password change error', errorCode, errorMessage);
                 // ..
             });
         }
 
         if (imageUrl !== '') {
-            updateProfile(auth.currentUser, {
-                photoURL: imageUrl
-            })
-            .then(() => {
-                updateDoc(doc(db, "users", auth.currentUser.uid), {
-                    imageUrl: imageUrl
-                });
-            })
+            updateDoc(doc(db, "users", auth.currentUser.uid), {
+                image: imageUrl
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log('profile image update error', errorCode, errorMessage);
+                // ..
+            });
         }
 
         navigate('/');

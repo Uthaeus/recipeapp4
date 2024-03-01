@@ -37,7 +37,7 @@ function RecipeNew() {
 
         addDoc(collection(db, "recipes"), {
             ...data,
-            user_id: user.uid
+            user_id: user.id
         })
         .then((doc) => {
             newDocId = doc.id;
@@ -108,8 +108,10 @@ function RecipeNew() {
                 </div>
 
                 <button type="submit" className="btn btn-primary">Create</button>
-                <Link to="/" className="auth-link">Cancel</Link>
+                
             </form>
+
+            <Link to="/" className="auth-link">Cancel</Link>
         </div>
     );
 }

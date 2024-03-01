@@ -38,7 +38,7 @@ function RecipeDetail() {
             <p>{recipe.description}</p>
             <p>{recipe.time}</p>
             
-            {user && (user.uid === recipe.user_id || user.role === 'admin') && (
+            {user && (user.id === recipe.user_id || user.role === 'admin') && (
                 <div className="recipe-detail-actions">
                     <Link to={`/recipe/${recipe.id}/edit`}><button>Edit</button></Link>
                     <button onClick={deleteRecipeHandler}>Delete</button>

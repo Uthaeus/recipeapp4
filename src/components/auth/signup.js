@@ -22,7 +22,8 @@ export default function Signup() {
         createUserWithEmailAndPassword(auth, data.email, data.password)
         .then(() => {
             setDoc(doc(db, "users", auth.currentUser.uid), {
-                email: data.email
+                email: data.email,
+                role: 'user'
             });
         })
         .then(() => {
