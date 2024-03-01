@@ -23,7 +23,7 @@ function ProfileEdit() {
             username: user.username ? user.username : '',
             email: user.email,
         })
-    }, []);
+    }, [ reset, user ]);
 
     const imageChangeHandler = (event) => {
         const file = event.target.files[0];

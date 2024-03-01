@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import { updateDoc } from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
 
 import { db } from "../../firebase-config";
 
@@ -28,7 +28,9 @@ function RecipeEdit() {
 
     useEffect(() => {
         reset(recipe);
-        setIngredients(recipe.ingredients);
+        if (recipe.ingredients) {
+            setIngredients(recipe.ingredients);
+        }
     }, [recipe, reset]);
 
     const addIngredientHandler = () => {
@@ -36,7 +38,7 @@ function RecipeEdit() {
             alert('both fields need to be filled');
             return;
         }
-        setIngredients([...ingredients, { ingredient, amount }]);
+        setIngredients((prev) => [...prev, { ingredient, amount }]);
         setIngredient('');
         setAmount('');
     }
@@ -113,7 +115,7 @@ function RecipeEdit() {
                     <div className="col-md-6">
                         <h3>Ingredients</h3>
                         <ul>
-                            {ingredients.map((ingredient, index) => (
+                            {ingredients?.map((ingredient, index) => (
                                 <li key={index}>
                                     {ingredient.ingredient} - {ingredient.amount}
                                 </li>
