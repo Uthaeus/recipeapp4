@@ -31,7 +31,6 @@ function RecipeNew() {
         } else {
             data.ingredients = ingredients;
         }
-
         
         let newDocId;
 

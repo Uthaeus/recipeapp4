@@ -1,7 +1,10 @@
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
+import { updateDoc } from "firebase/firestore";
+
+import { db } from "../../firebase-config";
 
 import { RecipesContext } from "../../store/recipesContext";
 
@@ -13,6 +16,8 @@ function RecipeEdit() {
     const [ingredients, setIngredients] = useState([]);
     const [ingredient, setIngredient] = useState('');
     const [amount, setAmount] = useState('');
+
+    const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
@@ -27,6 +32,10 @@ function RecipeEdit() {
     }, [recipe, reset]);
 
     const addIngredientHandler = () => {
+        if (ingredient === '' || amount === '') {
+            alert('both fields need to be filled');
+            return;
+        }
         setIngredients([...ingredients, { ingredient, amount }]);
         setIngredient('');
         setAmount('');
@@ -34,6 +43,28 @@ function RecipeEdit() {
 
     const submitHandler = (data) => {
         console.log(data);
+
+        let updatedIngredients = [];
+        if (ingredient !== '' && amount !== '') {
+            updatedIngredients = [...ingredients, { ingredient, amount }];
+        } else {
+            updatedIngredients = ingredients;
+        }
+        
+        data.ingredients = updatedIngredients;
+
+        updateDoc(doc(db, "recipes", id), {
+            ...data
+        })
+        .then(() => {
+            navigate(`/`);
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log('error', errorCode, errorMessage);
+            // ..
+        });
     }
 
     if (isLoading) {
