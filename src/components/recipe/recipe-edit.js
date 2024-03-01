@@ -10,7 +10,7 @@ import { RecipesContext } from "../../store/recipesContext";
 
 function RecipeEdit() {
     const { id } = useParams();
-    const { recipes } = useContext(RecipesContext);
+    const { recipes, deleteRecipe } = useContext(RecipesContext);
     const [recipe, setRecipe] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [ingredients, setIngredients] = useState([]);
@@ -41,6 +41,11 @@ function RecipeEdit() {
         setIngredients((prev) => [...prev, { ingredient, amount }]);
         setIngredient('');
         setAmount('');
+    }
+
+    const deleteRecipeHandler = () => {
+        deleteRecipe(id);
+        navigate('/');
     }
 
     const submitHandler = (data) => {
@@ -130,12 +135,15 @@ function RecipeEdit() {
                     {errors.instructions && <p className="auth-warning-text">Instructions are required</p>}
                 </div>
 
-                <button type="submit" className="btn btn-primary">Create</button>
+                <button type="submit" className="btn btn-primary">Update Recipe</button>
                 
             </form>
 
-            <Link to={`/recipe/${id}`} className="btn btn-secondary">Back to Detail</Link>
-            <Link to="/" className="auth-link">Home</Link>
+            <div className="recipe-edit-actions">
+                <button className="btn btn-danger" onClick={deleteRecipeHandler}>Delete</button>
+                <Link to={`/recipe/${id}`} className="btn btn-secondary">Back to Detail</Link>
+                <Link to="/" className="auth-link">Home</Link>
+            </div>
         </div>
     );
 }

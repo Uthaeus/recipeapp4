@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 import { db } from "../firebase-config";
 
@@ -31,6 +31,7 @@ export default function RecipesContextProvider({ children }) {
     };
 
     const deleteRecipe = (id) => {
+        deleteDoc(doc(db, "recipes", id));
         setRecipes(recipes.filter((recipe) => recipe.id !== id));
     };
 
