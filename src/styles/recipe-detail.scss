@@ -1,0 +1,22 @@
+
+.recipe-detail {
+
+    .recipe-detail-header {
+        display: flex;
+        justify-content: space-between;
+        margin: 2rem 0 0.5rem 0;
+        padding: 1rem 3rem;
+        border-bottom: 1px solid grey;
+
+        .recipe-detail-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: rgb(51, 50, 50);
+        }
+
+        .recipe-detail-time {
+            font-size: 0.9rem;
+            color: grey;
+        }
+    }
+}

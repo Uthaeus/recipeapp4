@@ -1,0 +1,27 @@
+@import 'recipe-detail';
+
+
+.form-ingredient-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+    color: rgb(51, 50, 50);
+
+    .ingredient-delete {
+        cursor: pointer;
+        border: 1px solid grey;
+        background-color: rgba(0, 0, 0, 0.13);
+        padding: 0.2rem;
+        border-radius: 50%;
+        color: red;
+        transition: color 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+
+        &:hover {
+            color: rgb(82, 48, 48);
+            background-color: rgba(255, 0, 0, 0.165);
+            transform: scale(1.02);
+        }
+    }
+}
