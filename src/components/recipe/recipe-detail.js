@@ -45,7 +45,7 @@ function RecipeDetail() {
 
             <p className="recipe-detail-description">{recipe.description}</p>
             
-            <div className="row">
+            <div className="row detail-content-wrapper">
                 <div className="col-md-5">
                     <div className="recipe-detail-ingredients-wrapper">
                         {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
@@ -59,6 +59,7 @@ function RecipeDetail() {
 
                 <div className="col-md-7">
                     <div className="recipe-detail-instructions-wrapper">
+                        <h2 className="recipe-detail-instructions-title">Instructions</h2>
                         <p className="recipe-detail-instructions">{recipe.instructions}</p>
                     </div>
                 </div>
@@ -67,11 +68,11 @@ function RecipeDetail() {
             <div className="recipe-detail-actions">
                 {user && (user.id === recipe.user_id || user.role === 'admin') && (
                     <>
-                        <Link to={`/recipe/${recipe.id}/edit`}><button>Edit</button></Link>
-                        <button onClick={deleteRecipeHandler}>Delete</button>
+                        <Link to={`/recipe/${recipe.id}/edit`} className="recipe-detail-link btn btn-success">Edit Recipe</Link>
+                        <p onClick={deleteRecipeHandler} className="recipe-detail-link btn btn-danger">Delete</p>
                     </>
                 )}
-                <Link to='/'><button>Back to Home</button></Link>
+                <Link to='/' className="recipe-detail-link btn btn-primary">Back to Home</Link>
             </div>
         </div>
     );
