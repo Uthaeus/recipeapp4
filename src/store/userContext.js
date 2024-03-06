@@ -19,19 +19,23 @@ function UserContextProvider({ children }) {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
                 const userRef = doc(db, "users", currentUser.uid);
-                const userSnapshot = onSnapshot(userRef, (user) => {
-                    setUser({...user.data(), id: currentUser.uid});
+                getDoc(userRef).then((userSnapshot) => {
+                    if (userSnapshot.exists()) {
+                        setUser({ ...userSnapshot.data(), id: currentUser.uid });
+                        setIsLoggedIn(true);
+                    } else {
+                        setUser(null);
+                        setIsLoggedIn(false);
+                    }
+                }).catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log('Error', errorCode, errorMessage);
                 });
-    
-                setIsLoggedIn(true);
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
             }
-        }, (error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log('Error', errorCode, errorMessage);
         });
     
         return () => {
