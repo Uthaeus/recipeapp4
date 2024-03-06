@@ -44,7 +44,8 @@ function RecipeNew() {
 
         addDoc(collection(db, "recipes"), {
             ...data,
-            user_id: user.id
+            user_id: user.id,
+            created_by: user.username
         })
         .then((doc) => {
             newDocId = doc.id;

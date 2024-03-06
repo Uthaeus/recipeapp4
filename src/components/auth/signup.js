@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { setDoc, doc, updateDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 
 export default function Signup() {
@@ -19,30 +19,15 @@ export default function Signup() {
         }
         console.log('sigining in', data);
 
+        let enteredUsername = data.username !== '' ? data.username : 'anonymous';
+
         createUserWithEmailAndPassword(auth, data.email, data.password)
         .then(() => {
             setDoc(doc(db, "users", auth.currentUser.uid), {
                 email: data.email,
-                role: 'user'
+                role: 'user',
+                username: enteredUsername
             });
-        })
-        .then(() => {
-            if (data.username !== '') {
-                updateProfile(auth.currentUser, {
-                    displayName: data.username
-                })
-                .then(() => {
-                    updateDoc(doc(db, "users", auth.currentUser.uid), {
-                        username: data.username
-                    });
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    console.log('error', errorCode, errorMessage);
-                    // ..
-                });
-            }
         })
         .then(() => {
             navigate('/');
