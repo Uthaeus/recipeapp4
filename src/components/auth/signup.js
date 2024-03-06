@@ -23,7 +23,7 @@ export default function Signup() {
 
         createUserWithEmailAndPassword(auth, data.email, data.password)
         .then(() => {
-            setDoc(doc(db, "users", auth.currentUser.uid), {
+            return setDoc(doc(db, "users", auth.currentUser.uid), {
                 email: data.email,
                 role: 'user',
                 username: enteredUsername
@@ -35,7 +35,7 @@ export default function Signup() {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log('error', errorCode, errorMessage);
+            console.log('error creating user', errorCode, errorMessage);
             // ..
         });
     }

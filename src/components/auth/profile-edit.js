@@ -37,7 +37,7 @@ function ProfileEdit() {
                 setImageUrl(url);
             })
             .catch((error) => {
-                console.log(error);
+                console.log('upload image error', error);
             });
     };
 
