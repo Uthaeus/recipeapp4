@@ -28,83 +28,62 @@ function ProfileEdit() {
     const imageChangeHandler = (event) => {
         const file = event.target.files[0];
         const imageRef = ref(storage, `images/${file.name}`);
+    
         uploadBytes(imageRef, file)
-        .then(() => {
-            getDownloadURL(imageRef)
+            .then(() => {
+                return getDownloadURL(imageRef);
+            })
             .then((url) => {
                 setImageUrl(url);
             })
             .catch((error) => {
                 console.log(error);
             });
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
+    };
 
     const submitHandler = async (data) => {
         if (data.password !== data.passwordConfirm) {
-            alert('passwords do not match');
+            alert('Passwords do not match');
             reset({
                 password: '',
                 passwordConfirm: ''
             });
             return;
         }
-
+    
+        const userDocRef = doc(db, "users", auth.currentUser.uid);
+        const updateTasks = [];
+    
+        if (data.username === '' && user.username !== 'anonymous') {
+            updateTasks.push(updateDoc(userDocRef, { username: 'anonymous' }));
+        }
+    
         if (data.username !== '' && data.username !== user.username) {
-            updateDoc(doc(db, "users", auth.currentUser.uid), {
-                username: data.username
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('profile username change error', errorCode, errorMessage);
-                // ..
-            });
+            updateTasks.push(updateDoc(userDocRef, { username: data.username }));
         }
-
+    
         if (data.email !== '' && data.email !== user.email) {
-            updateProfile(auth.currentUser, {
-                email: data.email
-            })
-            .then(() => {
-                updateDoc(doc(db, "users", auth.currentUser.uid), {
-                    email: data.email
-                });
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('profile email change error', errorCode, errorMessage);
-                // ..
-            });
+            updateTasks.push(updateProfile(auth.currentUser, { email: data.email }));
+            updateTasks.push(updateDoc(userDocRef, { email: data.email }));
         }
-
+    
         if (data.password !== '') {
-            updatePassword(auth.currentUser, data.password)
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('profile password change error', errorCode, errorMessage);
-                // ..
-            });
+            updateTasks.push(updatePassword(auth.currentUser, data.password));
         }
-
+    
         if (imageUrl !== '') {
-            updateDoc(doc(db, "users", auth.currentUser.uid), {
-                image: imageUrl
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('profile image update error', errorCode, errorMessage);
-                // ..
-            });
+            updateTasks.push(updateDoc(userDocRef, { image: imageUrl }));
         }
-
+    
+        try {
+            await Promise.all(updateTasks);
+        } catch (error) {
+            console.error('Profile update error:', error);
+            // Handle the error as needed
+        }
+    
         navigate('/');
-    }
+    };
 
     return (
         <div className="auth-container">
