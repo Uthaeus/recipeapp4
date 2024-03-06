@@ -18,7 +18,7 @@ function MainNavigation() {
             <div className="main-navigation-right">
                 { isLoggedIn ? <>
                     <Link to='/profile/edit'><img src={user?.image ? user.image : image} className="nav-profile-image" width={40} alt="profile" /></Link>
-                    <p className="main-nav-link">Hello, {user.username ? user.username : user.email}</p>
+                    <p className="main-nav-link">Hello, {user.username ? user.username : 'anonymous'}</p>
                     <NavLink to="/recipe/new" className={({ isActive }) => isActive ? 'main-nav-link active' : 'main-nav-link'}>Create New Recipe</NavLink>
                     <Link to='/' onClick={logout} className="main-nav-link">Logout</Link>
                 </> :
