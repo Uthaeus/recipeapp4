@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { updateDoc, doc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-import { db } from "../../firebase-config";
+import { db, storage } from "../../firebase-config";
 
 import { RecipesContext } from "../../store/recipesContext";
 
@@ -18,6 +19,7 @@ function RecipeEdit() {
     const [ingredients, setIngredients] = useState([]);
     const [ingredient, setIngredient] = useState('');
     const [amount, setAmount] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
 
     const navigate = useNavigate();
 
@@ -33,7 +35,27 @@ function RecipeEdit() {
         if (recipe.ingredients) {
             setIngredients(recipe.ingredients);
         }
+
+        if (recipe.image) {
+            setImageUrl(recipe.image);
+        }
     }, [recipe, reset]);
+
+    const imageChangeHandler = (event) => {
+        const file = event.target.files[0];
+        const imageRef = ref(storage, `images/${file.name}`);
+
+        uploadBytes(imageRef, file)
+            .then(() => {
+                return getDownloadURL(imageRef);
+            })
+            .then((url) => {
+                setImageUrl(url);
+            })
+            .catch((error) => {
+                console.log('upload image error', error);
+            });
+    };
 
     const addIngredientHandler = () => {
         if (ingredient === '' || amount === '') {
@@ -94,10 +116,22 @@ function RecipeEdit() {
             <h1>Edit {recipe.title}</h1>
 
             <form onSubmit={handleSubmit(submitHandler)} className="recipe-new-form">
-                <div className="form-group mb-3">
-                    <label htmlFor="title">Title*</label>
-                    <input type="text" id="title" className="form-control" {...register("title", { required: true })} />
-                    {errors.title && <p className="auth-warning-text">Title is required</p>}
+                <div className="row">
+                    <div className="col-md-8">
+                        <div className="form-group mb-3">
+                            <label htmlFor="title">Title*</label>
+                            <input type="text" id="title" className="form-control" {...register("title", { required: true })} />
+                            {errors.title && <p className="auth-warning-text">Title is required</p>}
+                        </div>
+                    </div> 
+
+                    <div className="col-md-4">
+                        <div className="form-group mb-3">
+                            <label htmlFor="time">Time*</label>
+                            <input type="text" id="time" className="form-control" {...register("time", { required: true })} />
+                            {errors.time && <p className="auth-warning-text">Time is required</p>}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="form-group mb-3">
@@ -106,11 +140,7 @@ function RecipeEdit() {
                     {errors.description && <p className="auth-warning-text">Description is required</p>}
                 </div>
 
-                <div className="form-group mb-3">
-                    <label htmlFor="time">Time*</label>
-                    <input type="text" id="time" className="form-control" {...register("time", { required: true })} />
-                    {errors.time && <p className="auth-warning-text">Time is required</p>}
-                </div>
+                
 
                 <div className="row">
                     <div className="col-md-6">
@@ -139,10 +169,27 @@ function RecipeEdit() {
                     </div>
                 </div>
 
-                <div className="form-group mb-3">
-                    <label htmlFor="instructions">Instructions*</label>
-                    <textarea id="instructions" className="form-control" {...register("instructions", { required: true })} />
-                    {errors.instructions && <p className="auth-warning-text">Instructions are required</p>}
+                <div className="row">
+                    <div className="col-md-8">
+                        <div className="form-group mb-3">
+                            <label htmlFor="instructions">Instructions*</label>
+                            <textarea id="instructions" className="form-control" rows="10" {...register("instructions", { required: true })} />
+                            {errors.instructions && <p className="auth-warning-text">Instructions are required</p>}
+                        </div>
+                    </div>
+                    
+                    <div className="col-md-4">
+                        {imageUrl === '' ? 
+                            <p className="recipe-new-image-filler">No image selected</p> 
+                            : 
+                            <img src={imageUrl} alt="" className="recipe-new-image" width="80%" />
+                        }
+
+                        <div className="form-group mb-3">
+                            <label htmlFor="image">Image</label>
+                            <input type="file" id="image" className="form-control" onChange={imageChangeHandler} />
+                        </div>
+                    </div>
                 </div>
 
                 <button type="submit" className="btn btn-primary">Update Recipe</button>
