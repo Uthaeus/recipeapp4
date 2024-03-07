@@ -9,6 +9,8 @@ import { auth, db, storage } from "../../firebase-config";
 
 import { UserContext } from "../../store/userContext";
 
+
+
 function ProfileEdit() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
@@ -71,7 +73,7 @@ function ProfileEdit() {
             updateTasks.push(updatePassword(auth.currentUser, data.password));
         }
     
-        if (imageUrl !== '') {
+        if (imageUrl !== '' && imageUrl !== user.image) {
             updateTasks.push(updateDoc(userDocRef, { image: imageUrl }));
         }
     

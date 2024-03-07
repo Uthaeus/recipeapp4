@@ -1,12 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { setDoc, doc } from "firebase/firestore";
-import { auth, db } from "../../firebase-config";
+import { auth, db, storage } from "../../firebase-config";
 
 export default function Signup() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const navigate = useNavigate();
+    const [imageUrl, setImageUrl] = useState('');
+
+    useEffect(() => {
+        const defaultImageRef = ref(storage, 'images/burrito_image.png1707504855793')
+
+        getDownloadURL(defaultImageRef)
+        .then((url) => {
+            setImageUrl(url);
+        })
+        .catch((error) => {
+            console.log('default image error', error);
+        });
+    }, []);
+
+    const imageChangeHandler = (event) => {
+        const file = event.target.files[0];
+        const imageRef = ref(storage, `images/${file.name}`);
+
+        uploadBytes(imageRef, file)
+            .then(() => {
+                return getDownloadURL(imageRef);
+            })
+            .then((url) => {
+                setImageUrl(url);
+            })
+            .catch((error) => {
+                console.log('upload image error', error);
+            });
+    };
 
     const submitHandler = (data) => {
         if (data.password !== data.passwordConfirm) {
@@ -26,7 +57,8 @@ export default function Signup() {
             return setDoc(doc(db, "users", auth.currentUser.uid), {
                 email: data.email,
                 role: 'user',
-                username: enteredUsername
+                username: enteredUsername,
+                image: imageUrl
             });
         })
         .then(() => {
@@ -54,7 +86,19 @@ export default function Signup() {
                 <div className="form-group mb-3">
                     <label htmlFor="username">Username</label>
                     <input type="text" id="username" className="form-control" {...register("username")} placeholder="optional" />
-                    
+                </div>
+
+                <div className="row mb-3">
+                    <div className="col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="image">Profile Image</label>
+                            <input type="file" id="image" className="form-control" onChange={imageChangeHandler} />
+                        </div>
+                    </div>
+
+                    <div className="col-md-6">
+                        <img src={imageUrl} alt="" className="auth-image" width="70%" />
+                    </div>
                 </div>
 
                 <div className="form-group mb-3">
